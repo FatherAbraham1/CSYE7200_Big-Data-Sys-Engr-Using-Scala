@@ -24,47 +24,29 @@ object MainSalesPerdiction {
   /**
    * data frame object for the daily sales
    */
-  case class salesDataFrame(date: String, month: Int, year: Long, activePower: Double, reactivePower: Double, voltage: Double, globalIntensity: Double,
-    subMetering1: Double, subMetering2: Double, subMetering3: Double, totalCost: Double,
-    totalPowerUsed: Double, powerMetered: Double)
+  case class salesDataFrame(storeID: String, storeType: String, assortment: String, competitionDistance: Long, promo: String, competitionOpenSinceMonth: Int, competitionOpenSinceYear: Int,
+    promo2: String, promo2SinceWeek: Int, promo2SinceYear: Int, promoInterval: String)
   
   /**
    * data frame object for the stores attributes
    */  
-  case class storeDataFrame(month: Int, year: Long, activePower: Double, reactivePower: Double, voltage: Double, globalIntensity: Double,
-    subMetering1: Double, subMetering2: Double, subMetering3: Double, totalCost: Double,
-    totalPowerUsed: Double, powerMetered: Double)
+  case class storeDataFrame(id: Long, storeID: Long, dayOfTheWeek: Long, date: String, sales: Long, customer: Long,
+    open: Int, promo: String, stateHoliday: String, schoolHoliday: String)
     
   /**
    * data frame object for the test dat set
    */
-  case class testDataFrame(year: Long, activePower: Double, reactivePower: Double, voltage: Double, globalIntensity: Double,
-    subMetering1: Double, subMetering2: Double, subMetering3: Double, totalCost: Double,
-    totalPowerUsed: Double, powerMetered: Double)
+  case class testDataFrame(id: Long, storeID: Long, dayOfTheWeek: Long, date: String, open: Int, promo: String, stateHoliday: String, schoolHoliday: String)
     
-  /**
-   *   data frame object for the AverageRevenueLossForOneday
-   */
-  case class AverageRevenueLossForOneday(Days: Int, RevenueLoss: Double)
   
   /**
-   * data frame object for the PeakTimeLoad
+   * data frame object for the NextSixWeekSales
    */
-  case class PeakTimeLoad(WeekdayPeakTimeLoad: Double, WeekendPeakTimeLoad: Double)
-  
-  /**
-   * data frame object for the NextDayPowerConsumption
-   */
-  case class NextDayPowerConsumption(date: String, powerConsumption: Double)
-  
-  /**
-   * data frame object for the NextYearPowerConsumption
-   */
-  case class NextYearPowerConsumption(week: String, day: String, power_consumption: String, date: String)
+  case class NextSixWeekSales(id: String, sales: String, date: String)
     
     private final val MYSQL_USERNAME = "laksh";
     private final val MYSQL_PWD = "laksh";
-    private final val MYSQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/energy_prediction?user=" + MYSQL_USERNAME + "&password=" + MYSQL_PWD;
+    private final val MYSQL_CONNECTION_URL = "jdbc:mysql://localhost:3306/sales_prediction?user=" + MYSQL_USERNAME + "&password=" + MYSQL_PWD;
 
   /**
    * main method
