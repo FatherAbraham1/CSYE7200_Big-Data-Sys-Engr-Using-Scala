@@ -1,27 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>spark-scala-maven-project</groupId>
-	<artifactId>spark-scala-maven-project</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>Rossmann-Sales</groupId>
+	<artifactId>Rossmann-Sales</artifactId>
+	<version>0.0.1</version>
 	<name>${project.artifactId}</name>
-	<description>This is a boilerplate maven project to start using Spark in Scala</description>
-	<inceptionYear>2010</inceptionYear>
+	<description>Rossmann Sales Prediction Analysis using Apache Spark</description>
+	<inceptionYear>2015</inceptionYear>
 
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<encoding>UTF-8</encoding>
 		<scala.tools.version>2.10</scala.tools.version>
-		<!-- Put the Scala version of the cluster -->
-		<scala.version>2.10.4</scala.version>		
+		<spark.version>1.5.1</spark.version>
+		<scala.version>2.10.5</scala.version>		
 	</properties>
 	
 	<!-- repository to add org.apache.spark -->
 	<repositories>
 		<repository>
-			<id>cloudera-repo-releases</id>
-			<url>https://repository.cloudera.com/artifactory/repo/</url>
+			<id>bintray-spark-packages</id>
+			<url>https://dl.bintray.com/spark-packages/maven/</url>
+		</repository>
+		<repository>
+			<id>Typesafe Simple Repository</id>
+			<url>http://repo.typesafe.com/typesafe/simple/maven-releases/</url>
 		</repository>
 	</repositories>
 
@@ -134,32 +138,27 @@
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
-			<version>1.4.1</version>
+			<version>${spark.version}</version>
 		</dependency>
-        <dependency>
-   			<groupId>org.apache.hadoop</groupId>
-   			<artifactId>hadoop-streaming</artifactId>
-   			<version>2.2.0</version>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-graphx_2.10</artifactId>
+			<version>${spark.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math</artifactId>
-            <version>2.1</version>
-        </dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
-			<version>1.4.1</version>
+			<version>${spark.version}</version>
 		</dependency>
 		<dependency>
 	      <groupId>org.apache.hadoop</groupId>
 	      <artifactId>hadoop-client</artifactId>
-	      <version>2.7.0</version>
+	      <version>2.4.0</version>
 	    </dependency>
 	    <dependency>
-		   <groupId>com.quantifind</groupId>
-	       <artifactId>wisp_2.11</artifactId>
-	       <version>0.0.1</version>
+		   <groupId>org.apache.spark</groupId>
+	       <artifactId>spark-hive_2.10</artifactId>
+	       <version>${spark.version}</version>
         </dependency>
         <dependency>
 			<groupId>mysql</groupId>
@@ -169,9 +168,37 @@
 		<dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
-            <version>1.4.1</version>
+            <version>${spark.version}</version>
+        </dependency>	
+		<dependency>
+            <groupId>com.databricks</groupId>
+            <artifactId>spark-csv_2.10</artifactId>
+            <version>1.2.0</version>
         </dependency>
-	
+        
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.10</artifactId>
+			<version>3.0.0-M12</version>
+		</dependency>
+        
+        <dependency>
+			<groupId>org.scalacheck</groupId>
+			<artifactId>scalacheck_2.10</artifactId>
+			<version>1.12.5</version>
+		</dependency>
 	</dependencies>
 </project>
 

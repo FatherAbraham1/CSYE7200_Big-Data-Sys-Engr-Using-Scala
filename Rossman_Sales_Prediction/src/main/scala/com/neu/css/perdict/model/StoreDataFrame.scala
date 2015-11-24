@@ -3,7 +3,7 @@ package com.neu.css.perdict.model
 /**
  * lakshl
  */
-class StoreDataFrame() extends Serializable with Equals {
+class StoreDataFrame() extends Serializable{
 
   var storeID: Int = _
   var storeType: String = _
