@@ -12,7 +12,7 @@ object RossmannSalesPerdiction extends Serializable {
 
   val ROSSMANN_SALES_PREDICTION_LINEAR_REG = "Rossmann Sales Prediction with Linear Regression"
   val SPARK_STORAGE_MEMORY_FRACTION = "spark.storage.memoryFraction"
-  val SPARK_STORAGE_MEMORY_VALUE = "1"
+  val SPARK_STORAGE_MEMORY_VALUE = ".9"
   val SET_UP_MESSAGE_COMPLETION = "Spark Set Up Complete"
   val STARTING_RANDOM_FOREST_EVALUATION = "Evaluating Model with Linear Regression"
   val SALES_PREDICTION_RESULT_CSV = "sales_prediction_result.csv"
@@ -25,7 +25,7 @@ object RossmannSalesPerdiction extends Serializable {
     logger.info(s"Starting up $name")
 
     val conf = new SparkConf().setAppName(name)
-    conf.set(SPARK_STORAGE_MEMORY_FRACTION, SPARK_STORAGE_MEMORY_VALUE);
+    conf.set(SPARK_STORAGE_MEMORY_FRACTION, SPARK_STORAGE_MEMORY_VALUE)
     val sc = new SparkContext(conf)
     val hiveContext = new HiveContext(sc)
 

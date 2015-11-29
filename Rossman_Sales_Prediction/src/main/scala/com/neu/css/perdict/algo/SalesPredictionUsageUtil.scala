@@ -48,7 +48,7 @@ object SalesPredictionUsageUtil {
     .setOutputCol("StoreVector")
 
   val vectorAssembler = new VectorAssembler()
-    .setInputCols(Array("StoreVec", "DayOfWeekVec", "Open",
+    .setInputCols(Array("StoreVector", "DayOfWeekVector", "Open",
       "DayOfMonthVector", "StateHolidayVector", "SchoolHolidayVector"))
     .setOutputCol("features")
 

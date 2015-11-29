@@ -40,7 +40,6 @@ object DataAggregatorUtil {
       .option(HEADER, IS_HEADER)
       .load(filePath)
       .repartition(30)
-
     rawdata
   }
 
