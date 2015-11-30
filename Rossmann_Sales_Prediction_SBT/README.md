@@ -1,4 +1,4 @@
-# An Rossmann Sales Prediction using Random Forest Regression in Spark
+# Rossmann Sales Prediction using Random Forest Regression in Spark
 
 # Run the following Commands
 1. sbt clean
