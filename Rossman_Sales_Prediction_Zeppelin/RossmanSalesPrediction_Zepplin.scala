@@ -30,16 +30,17 @@ val csv = sc.textFile("rossman_train.csv")
   // splits to map (header/value pairs)
   
   
-  val date_reg = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
+val date_reg = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
 case class RossmannRecord(store: Double, dayofweek: Double, date: String, sales: Double, customers: Double, open: Double, promo: Double, stateholiday: String, schoolholiday: String, dayofmonth: Double)
+
+// this is used to implicitly convert an RDD to a DataFrame.
+import sqlContext.implicits._
 val rossmann = data.map(r =>RossmannRecord(r(0).toDouble,r(1).toDouble,r(2).trim,r(3).toDouble,r(4).toDouble,r(5).toDouble,r(6).toDouble,r(7)replace("\"", ""),r(8).replace("\"", ""),r(2) match {case date_reg(y,m,d) => s"$d".toDouble})).toDF()
 rossmann.registerTempTable("rossmann")
+val trainDataset = sqlContext.sql("SELECT sales as label, store, open, dayofweek, stateholiday, schoolholiday, dayofmonth  FROM rossmann")
 
 
-rossmann.first()
-
-
-val indexStateHoliday = new StringIndexer()
+ val indexStateHoliday = new StringIndexer()
      .setInputCol("stateholiday")
      .setOutputCol("StateHolidayIndex")
   
@@ -73,36 +74,33 @@ val indexStateHoliday = new StringIndexer()
     .setOutputCol("features")
 	
 	
-def prepareRandomForestPipeline(): TrainValidationSplit = {
+  // prepare the linear regression model for testing purpose only 
+  def prepareLinearRegressionPipeline(): TrainValidationSplit = {
     
-    val randomForest = new RandomForestRegressor()
+    val linearRegression = new LinearRegression()
 
     val paramGrid = new ParamGridBuilder()
-      .addGrid(randomForest.minInstancesPerNode, Array(1, 5, 15))
-      .addGrid(randomForest.maxDepth, Array(2, 4, 8))
-      .addGrid(randomForest.numTrees, Array(20, 50, 100))
+      .addGrid(linearRegression.regParam, Array(0.1,0.01))
+      .addGrid(linearRegression.fitIntercept)
+      .addGrid(linearRegression.elasticNetParam, Array(0.0, 0.25, 0.5, 0.75, 1.0))
       .build()
 
     val pipeline = new Pipeline()
       .setStages(Array(indexStateHoliday, indexSchoolHoliday,
         encodeStateHoliday, encodeSchoolHoliday, encodeStore,
         encodeDayOfWeek, encodeDayOfMonth,
-        vectorAssembler, randomForest))
+        vectorAssembler, linearRegression))
 
     val trainValidationSplit = new TrainValidationSplit()
       .setEstimator(pipeline)
       .setEvaluator(new RegressionEvaluator)
       .setEstimatorParamMaps(paramGrid)
-      .setTrainRatio(0.55)
+      .setTrainRatio(0.75)
       
     trainValidationSplit
   }
   
-
-  
-  val randomForestTvs = prepareRandomForestPipeline()
-
-
+  val linearTvs = prepareLinearRegressionPipeline()
   
     def prepareAndFitModel(transValidationSplit : TrainValidationSplit, data: DataFrame) = {
     
@@ -122,32 +120,78 @@ def prepareRandomForestPipeline(): TrainValidationSplit = {
 
     // print the resultant matrix 
     print("Result Metrics")
-    print("Result Explained Variance: " + regressionMatrix.explainedVariance)
-    print("Result R^2 Coeffieciant: " +  regressionMatrix.r2)
-    print("Result Mean Square Error : " + regressionMatrix.meanSquaredError)
+   
     print("Result Root Mean Squared Error : " + regressionMatrix.rootMeanSquaredError)
     
     model
   }
   
   
-  
-  val trainDataset = sqlContext.sql("SELECT sales as label, store, open, dayofweek, stateholiday, schoolholiday, dayofmonth  FROM rossmann")
-  
+  val trainDataset = sqlContext.sql("SELECT sales as label, store, open, dayofweek, stateholiday, schoolholiday, dayofmonth, customers  FROM rossmann where open=1 AND sales>0  ")
   
   
-  trainDataset.first()
-  
-  
-  
-  val randomForestTvs = prepareRandomForestPipeline()
-  
-  
-  
- val randomForestModel = prepareAndFitModel(randomForestTvs, trainDataset)
+   val linearModel = prepareAndFitModel(linearTvs, trainDataset)
    
-   
-   
-   
+   def savePredictions(predictions: DataFrame, testRaw: DataFrame, filePath: String) = {
+    
+    val testdataOutput = testRaw
+      .select("Id")
+      .distinct()
+      .join(predictions, testRaw("Id") === predictions("PredId"), "outer")
+      .select("Id", "Sales")
+      .na.fill(0: Double)
+    
+    // fill these with something
+    testdataOutput
+      .coalesce(1)
+      .write.format("com.databricks.spark.csv")
+      .option("header", "true")
+      .save(filePath)
+  }
+  
+  
+  val testcsv = sc.textFile("test.csv")
+  // split / clean data
+  val testheaderAndRows = testcsv.map(line => line.split(",").map(_.trim))
+  // get header
+  val testheader = testheaderAndRows.first
+  // filter out header (eh. just check if the first val matches the first header name)
+  val testdata = testheaderAndRows.filter(_(0) != testheader(0))
+  
+  
+  val date_reg = """(\d\d\d\d)-(\d\d)-(\d\d)""".r
+case class TestRossmannRecord(id:Double ,store: Double, dayofweek: Double, date: String, open: Double, promo: Double, stateholiday: String, schoolholiday: String, dayofmonth: Double)
 
-  
+// this is used to implicitly convert an RDD to a DataFrame.
+import sqlContext.implicits._
+val test_rossmann = testdata.map(r =>TestRossmannRecord(r(0).toDouble,r(1).toDouble,r(2).toDouble,r(3).trim,r(4) match {case "" => 0 case _ => r(4).toDouble},r(5).toDouble,r(6).replace("\"", ""),r(7).replace("\"", ""),r(3) match {case date_reg(y,m,d) => s"$d".toDouble})).toDF()
+test_rossmann.registerTempTable("test_rossmann")
+
+
+val testDataset = sqlContext.sql("SELECT  id,store, open, dayofweek, stateholiday, schoolholiday, dayofmonth  FROM test_rossmann where open=1   ")
+
+
+testDataset.show()
+
+val linearRegOutput = linearModel.transform(testDataset)
+      .withColumnRenamed("prediction", "Sales")
+      .withColumnRenamed("id", "PredId")
+      .select("PredId", "Sales")
+	  
+ def savePredictions(predictions: DataFrame, testRaw: DataFrame, filePath: String) = {
+    
+    val testdataOutput = testRaw
+      .select("id")
+      .distinct()
+      .join(predictions, testRaw("id") === predictions("PredId"), "outer")
+      .select("id", "Sales")
+      .na.fill(0: Double)
+    
+    
+    testdataOutput.show()
+    
+    testdataOutput.rdd.saveAsTextFile(filePath)
+ 
+  }
+
+  savePredictions(linearRegOutput, testDataset, "sales_prediction_result.csv")
