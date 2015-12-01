@@ -31,20 +31,20 @@ object RossmannSalesPerdiction extends Serializable {
 
     logger.info(SET_UP_MESSAGE_COMPLETION)
 
-    // load the training data set
+    // loading the training data set
     val trainDataset = DataAggregatorUtil.loadTrainDataset(hiveContext, args(0))
     
-    // load the test data set
+    // loading the test data set
     val Array(testRawdata, testDataset) = DataAggregatorUtil.loadTestDataset(hiveContext, args(1))
 
-    // The Preparing the Spark Random Forest Pipeline for using ML library 
+    //  Preparing the Spark Random Forest Pipeline for using ML library 
     val randomForestTvs = SalesPredictionUsageUtil.prepareRandomForestPipeline()
     logger.info(STARTING_RANDOM_FOREST_EVALUATION)
 
     //Preparing the Random Forest Model
     val randomForestModel = SalesPredictionUsageUtil.prepareAndFitModel(randomForestTvs, trainDataset)
 
-    //Transform the test data set according to the model 
+    //Transforming the test data set according to the model 
     val randomForestOutput = randomForestModel.transform(testDataset)
       .withColumnRenamed("prediction", "Sales")
       .withColumnRenamed("Id", "PredId")
