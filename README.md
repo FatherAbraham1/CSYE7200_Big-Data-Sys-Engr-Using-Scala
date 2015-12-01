@@ -1,7 +1,5 @@
-# CSYE7200_Big-Data-Sys-Engr-Using-Scala
-Fall 2015 CSYE7200 Big-Data-Sys-Engr-Using-Scala Projects and Assignments
-
-#Rossmann Sales Prediction
+#Fall 2015 CSYE7200 Big-Data-Sys-Engr-Using-Scala Projects and Assignments
+#Rossmann Sales Prediction 
 
 # Three versions of code available to run:
 1. Maven version (RandomForestRegression)
