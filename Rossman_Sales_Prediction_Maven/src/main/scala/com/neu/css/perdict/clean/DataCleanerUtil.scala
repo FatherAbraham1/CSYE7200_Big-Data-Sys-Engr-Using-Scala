@@ -4,7 +4,6 @@ import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import java.text.SimpleDateFormat
 import com.neu.css.perdict.model.StoreSalesDataFrame
-import com.neu.css.perdict.model.StoreDataFrame
 
 /**
  * lakshl
@@ -50,32 +49,6 @@ class DataCleanerUtil {
     })
 
   }
-
-  // Map the input RDD to the correct of Sales data format
-  def covertToStoreFormat(inputRDD: RDD[String]): RDD[StoreDataFrame] = {
-
-    val simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy")
-    inputRDD.map(line => {
-      val values = line.split(";")
-      val storeDataValue = new StoreDataFrame()
-      val storeId = values { 0 }
-      val dayOfTheWeek = values { 1 }
-      val dateValue = simpleDateFormat.parse(values { 2 })
-      val dateString = simpleDateFormat.format(dateValue)
-      storeDataValue.storeID = values { 0 }.toInt
-      storeDataValue.storeType = values { 1 }
-      storeDataValue.assortment = values { 2 }
-      storeDataValue.competitionDistance = values { 3 }.toLong
-      storeDataValue.promo = values { 4 }.toInt
-      storeDataValue.competitionOpenSinceMonth = values { 5 }.toInt
-      storeDataValue.competitionOpenSinceYear = values { 6 }.toInt
-      storeDataValue.promo2 = values { 7 }.toInt
-      storeDataValue.promo2SinceWeek = values { 8 }.toInt
-      storeDataValue.promo2SinceYear = values { 9 }.toInt
-      storeDataValue.promoInterval = values { 10 }
-      storeDataValue
-    })
-  } 
    
 }
 
