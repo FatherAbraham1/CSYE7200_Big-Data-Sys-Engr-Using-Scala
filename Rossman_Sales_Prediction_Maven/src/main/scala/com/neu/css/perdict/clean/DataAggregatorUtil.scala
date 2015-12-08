@@ -24,7 +24,7 @@ object DataAggregatorUtil {
       StateHoliday, SchoolHoliday, (double(regexp_extract(Date, '\\d+-\\d+-(\\d+)', 1))) DayOfMonth
       FROM raw_training_table"""
 
-  //  filter out the null values manually
+  //  filtering out the null values manually
   val SQL_RETRIEVE_TEST_DATA_QUERY = """SELECT
       Id, double(Store) Store, int(Open) Open, double(DayOfWeek) DayOfWeek, StateHoliday, 
       SchoolHoliday, (double(regexp_extract(Date, '\\d+-\\d+-(\\d+)', 1))) DayOfMonth
@@ -32,7 +32,7 @@ object DataAggregatorUtil {
       WHERE !(ISNULL(Id) OR ISNULL(Store) OR ISNULL(Open) OR ISNULL(DayOfWeek) 
         OR ISNULL(StateHoliday) OR ISNULL(SchoolHoliday))"""
 
-  // Get the Raw data using databricks csv formatter
+  // Getting the raw data using databricks csv formatter 
   def getRawdata(hiveContext: HiveContext, filePath: String) = {
 
     val rawdata = hiveContext
@@ -40,10 +40,11 @@ object DataAggregatorUtil {
       .option(HEADER, IS_HEADER)
       .load(filePath)
       .repartition(30)
+
     rawdata
   }
 
-  //load the training data csv using the databricks csv formatter and register it as temp table 
+  //loading the training data csv using the databricks csv formatter and registering it as temp table 
   def loadTrainDataset(hiveContext: HiveContext, filePath: String): DataFrame = {
 
     val trainRawdata = getRawdata(hiveContext, filePath)
@@ -53,7 +54,7 @@ object DataAggregatorUtil {
     hiveContext.sql(SQL_RETRIEVE_TRAINING_DATA_QUERY).na.drop()
   }
 
-  //load the training data csv using the databricks csv formatter and register it as temp table 
+  //loading the test data csv using the databricks csv formatter and registering it as temp table 
   def loadTestDataset(hiveContext: HiveContext, filePath: String) = {
 
     val testRawdata = getRawdata(hiveContext, filePath)

@@ -125,11 +125,10 @@ object SalesPredictionUsageUtil {
 
     // print the resultant matrix 
     logger.info("Result Metrics")
-//    logger.info("Result Explained Variance: " + regressionMatrix.explainedVariance)
+    logger.info("Result Explained Variance: " + regressionMatrix.explainedVariance)
     logger.info("Result R^2 Coeffieciant: " +  regressionMatrix.r2)
-//    logger.info("Result Mean Square Error : " + regressionMatrix.meanSquaredError)
+    logger.info("Result Mean Square Error : " + regressionMatrix.meanSquaredError)
     logger.info("Result Root Mean Squared Error : " + regressionMatrix.rootMeanSquaredError)
-//	logger.info("Result Mean Absolute Error : " + regressionMatrix.meanAbsoluteError)
     
     model
   }

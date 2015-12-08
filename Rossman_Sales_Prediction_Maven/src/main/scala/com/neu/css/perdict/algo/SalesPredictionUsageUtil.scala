@@ -19,6 +19,8 @@ object SalesPredictionUsageUtil {
 
   @transient lazy val logger = Logger.getLogger(getClass.getName)
 
+  // Using indexer and oneHotEncoder to convert the label columns to dummy variables 
+  
   val indexStateHoliday = new StringIndexer()
      .setInputCol("StateHoliday")
      .setOutputCol("StateHolidayIndex")
